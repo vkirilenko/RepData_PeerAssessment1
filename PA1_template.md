@@ -34,7 +34,7 @@ hist(steps$Sum_of_steps,breaks = 30, freq = T, col = "darkred", xlab = "Sum of s
      main = paste("Total number of steps taken each day"))
 ```
 
-![plot of chunk Plottins steps data](figure/Plottins steps data-1.png) 
+![plot of chunk Plotting steps data](figure/Plotting steps data-1.png) 
 
 **_2. Calculate and report the mean and median total number of steps taken per day_**  
 
@@ -67,12 +67,13 @@ max_interval = (interval[which(grepl(max(interval$Mean), interval$Mean)),3])
 plot(interval$Time, interval$Mean, type="l", xlab="Interval", xaxt="n", ylab="Mean of steps",
      main = paste("Average daily activity pattern"))
 abline(v=axis.POSIXct(1, at = max_interval,col = "red",lwd = 2),col = "gray", lty = "dotted",lwd = par("lwd"))
-axis.POSIXct(side = 1, at = c(interval[37,3],interval[73,3], interval[133,3],interval[181,3], 
-                              interval[217,3],interval[253,3]))
+axis.POSIXct(side = 1, at = c(interval[37,3],interval[85,3], interval[133,3],interval[169,3], 
+                              interval[217,3],interval[265,3]))  
 ```
 
 ![plot of chunk Calculating mean of steps by interval and plot means by interval](figure/Calculating mean of steps by interval and plot means by interval-1.png) 
   
+The 5-minute interval that contains, in average, the maximum number of steps is **08:35.**  
   
 ### Third question: imputing missing values  
 **_1. Calculating sum of NA in dataset_**  
@@ -85,7 +86,10 @@ sum(is.na(activity))
 ## [1] 2304
 ```
 
-**_2. Imputing NA in dataset_**  
+**_2. Imputing NA in dataset_**   
+I choose the median of steps as data for replacing data NA values.  
+I think that median is more stable with deviations than the mean.  
+So, I got medians of steps each day and exchanged them with NA values where they were present.  
 
 ```r
 act_temp = aggregate(steps ~ interval, data=activity, median)
@@ -100,7 +104,7 @@ names(median_steps) = c("Date","Sum_of_steps")
 
 ```r
 hist(median_steps$Sum_of_steps,breaks = 30, freq = T, col = "darkred", xlab = "Sum of steps",
-     main = paste("Total number of steps taken each day with replacement"))
+     main = paste("Total number of steps taken each day with replacement of NA"))
 ```
 
 ![plot of chunk Plot new hist with imputing data](figure/Plot new hist with imputing data-1.png) 
@@ -141,9 +145,16 @@ Difference between sums of steps (and means of steps also) is only **1.60 %**.
 ```r
 activity$Date_Time = strptime(paste(activity$date, activity$interval), format = "%Y-%m-%d %H%M")
 activity$weekdays = weekdays(activity[,4])
-weekend = subset(activity, activity$weekdays %in% c("суббота","воскресенье","saturday","sunday"))
-weekday = subset(activity, !(activity$weekdays %in% c("суббота","воскресенье","saturday","sunday")))
+weekend = subset(activity, activity$weekdays %in% c("Saturday","Sunday"))
+weekday = subset(activity, !(activity$weekdays %in% c("Saturday","Sunday")))
 intWE = aggregate(weekend$steps, by=list(weekend$interval), mean, na.rm=TRUE)
+```
+
+```
+## Error in aggregate.data.frame(as.data.frame(x), ...): no rows to aggregate
+```
+
+```r
 intWE$day = "weekend"
 intWD = aggregate(weekday$steps, by=list(weekday$interval), mean, na.rm=TRUE)
 intWD$day = "weekday"
@@ -166,4 +177,4 @@ ggplot(all_data, aes(group = Day,Interval,Mean, col = Day)) + geom_line() +
 
 ![plot of chunk Plot combined dataset](figure/Plot combined dataset-1.png) 
   
-**Last edition: 18:17:35 13/03/2015**
+**Last edition: 21:01:50 13/03/2015**

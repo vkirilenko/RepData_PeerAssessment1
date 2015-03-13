@@ -29,7 +29,7 @@ unlink(temp)
 ### First question: what is mean total number of steps taken per day?
 
 **_1. Plot total number of steps taken each day and calculate mean & median_**  
-```{r "Plottins steps data", fig.height=6, fig.width=9}
+```{r "Plotting steps data", fig.height=6, fig.width=9}
 steps = aggregate(activity$steps, by=list(activity$date), sum, na.rm=TRUE)
 names(steps) = c("Date","Sum_of_steps")
 hist(steps$Sum_of_steps,breaks = 30, freq = T, col = "darkred", xlab = "Sum of steps",
@@ -60,10 +60,11 @@ max_interval = (interval[which(grepl(max(interval$Mean), interval$Mean)),3])
 plot(interval$Time, interval$Mean, type="l", xlab="Interval", xaxt="n", ylab="Mean of steps",
      main = paste("Average daily activity pattern"))
 abline(v=axis.POSIXct(1, at = max_interval,col = "red",lwd = 2),col = "gray", lty = "dotted",lwd = par("lwd"))
-axis.POSIXct(side = 1, at = c(interval[37,3],interval[73,3], interval[133,3],interval[181,3], 
-                              interval[217,3],interval[253,3]))
-```
+axis.POSIXct(side = 1, at = c(interval[37,3],interval[85,3], interval[133,3],interval[169,3], 
+                              interval[217,3],interval[265,3]))  
+```  
   
+The 5-minute interval that contains, in average, the maximum number of steps is **`r as.character((max_interval), format = "%H:%M")`.**  
   
 ### Third question: imputing missing values  
 **_1. Calculating sum of NA in dataset_**  
@@ -71,7 +72,10 @@ axis.POSIXct(side = 1, at = c(interval[37,3],interval[73,3], interval[133,3],int
 sum(is.na(activity))
 ```
 
-**_2. Imputing NA in dataset_**  
+**_2. Imputing NA in dataset_**   
+I choose the median of steps as data for replacing data NA values.  
+I think that median is more stable with deviations than the mean.  
+So, I got medians of steps each day and exchanged them with NA values where they were present.  
 ``` {r "Make NA`s replacement"}
 act_temp = aggregate(steps ~ interval, data=activity, median)
 names(act_temp)[2] = "medianSteps"
@@ -84,7 +88,7 @@ names(median_steps) = c("Date","Sum_of_steps")
 **_3. Plot new dataset and calculating new mean & median_**  
 ``` {r "Plot new hist with imputing data"}
 hist(median_steps$Sum_of_steps,breaks = 30, freq = T, col = "darkred", xlab = "Sum of steps",
-     main = paste("Total number of steps taken each day with replacement"))
+     main = paste("Total number of steps taken each day with replacement of NA"))
 matrix(c(c(mean(steps$Sum_of_steps), mean(median_steps$Sum_of_steps)),c(median(steps$Sum_of_steps), 
  median(median_steps$Sum_of_steps))),nrow = 2, ncol = 2, dimnames = list(c("Steps with NA","Steps w/o NA"),
                                                                          c("Mean","Median")))
@@ -107,8 +111,8 @@ Difference between sums of steps (and means of steps also) is only **`r ratio`**
 ``` {r "Split and combine data by day of week"}
 activity$Date_Time = strptime(paste(activity$date, activity$interval), format = "%Y-%m-%d %H%M")
 activity$weekdays = weekdays(activity[,4])
-weekend = subset(activity, activity$weekdays %in% c("суббота","воскресенье","saturday","sunday"))
-weekday = subset(activity, !(activity$weekdays %in% c("суббота","воскресенье","saturday","sunday")))
+weekend = subset(activity, activity$weekdays %in% c("Saturday","Sunday"))
+weekday = subset(activity, !(activity$weekdays %in% c("Saturday","Sunday")))
 intWE = aggregate(weekend$steps, by=list(weekend$interval), mean, na.rm=TRUE)
 intWE$day = "weekend"
 intWD = aggregate(weekday$steps, by=list(weekday$interval), mean, na.rm=TRUE)
