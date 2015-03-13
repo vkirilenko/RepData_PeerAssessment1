@@ -107,8 +107,8 @@ Difference between sums of steps (and means of steps also) is only **`r ratio`**
 ``` {r "Split and combine data by day of week"}
 activity$Date_Time = strptime(paste(activity$date, activity$interval), format = "%Y-%m-%d %H%M")
 activity$weekdays = weekdays(activity[,4])
-weekend = subset(activity, activity$weekdays %in% c("суббота","воскресенье","saturaday","sunday"))
-weekday = subset(activity, !(activity$weekdays %in% c("суббота","воскресенье","saturaday","sunday")))
+weekend = subset(activity, activity$weekdays %in% c("суббота","воскресенье","saturday","sunday"))
+weekday = subset(activity, !(activity$weekdays %in% c("суббота","воскресенье","saturday","sunday")))
 intWE = aggregate(weekend$steps, by=list(weekend$interval), mean, na.rm=TRUE)
 intWE$day = "weekend"
 intWD = aggregate(weekday$steps, by=list(weekday$interval), mean, na.rm=TRUE)

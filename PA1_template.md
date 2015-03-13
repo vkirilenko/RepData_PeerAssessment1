@@ -141,8 +141,8 @@ Difference between sums of steps (and means of steps also) is only **1.60 %**.
 ```r
 activity$Date_Time = strptime(paste(activity$date, activity$interval), format = "%Y-%m-%d %H%M")
 activity$weekdays = weekdays(activity[,4])
-weekend = subset(activity, activity$weekdays %in% c("суббота","воскресенье","saturaday","sunday"))
-weekday = subset(activity, !(activity$weekdays %in% c("суббота","воскресенье","saturaday","sunday")))
+weekend = subset(activity, activity$weekdays %in% c("суббота","воскресенье","saturday","sunday"))
+weekday = subset(activity, !(activity$weekdays %in% c("суббота","воскресенье","saturday","sunday")))
 intWE = aggregate(weekend$steps, by=list(weekend$interval), mean, na.rm=TRUE)
 intWE$day = "weekend"
 intWD = aggregate(weekday$steps, by=list(weekday$interval), mean, na.rm=TRUE)
@@ -166,4 +166,4 @@ ggplot(all_data, aes(group = Day,Interval,Mean, col = Day)) + geom_line() +
 
 ![plot of chunk Plot combined dataset](figure/Plot combined dataset-1.png) 
   
-**Last edition: 18:06:46 13/03/2015**
+**Last edition: 18:17:35 13/03/2015**
